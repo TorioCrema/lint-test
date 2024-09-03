@@ -1,37 +1,39 @@
 ---
 name: Lint
 
-on: # yamllint disable-line rule:truthy
+on:
+  push:
   pull_request:
     branches:
       - main
 
-permissions: {}
-
 jobs:
-  build:
-    name: Lint
+  changed_files:
     runs-on: ubuntu-latest
-
-    permissions:
-      contents: read
-      packages: read
-      # To report GitHub Actions status checks
-      statuses: write
-
+    name: Linting
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
-          # super-linter needs the full git history to get the
-          # list of files that changed across commits
           fetch-depth: 0
+      - name: Install Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.8"
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install ruff
 
-      - name: Super-linter
-        uses: super-linter/super-linter@v7.0.0 # x-release-please-version
+      - name: Get changed python files
+        id: changed-py-files
+        uses: tj-actions/changed-files@v45
+        with:
+          files: |
+            **.py
+      - name: Lint all changed python files
+        if: steps.changed-py-files.outputs.any_changed == 'true'
         env:
-          # To report GitHub Actions status checks
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          VALIDATE_ALL_CODEBASE: false
-          VALIDATE_PYTHON_BLACK: true
-          VALIDATE_CPP: true
+          ALL_CHANGED_FILES: ${{ steps.changed-py-files.outputs.all_changed_files }}
+        run: |
+          ruff check --output-format=github ${{ ALL_CHANGED_FILES }}
+      
