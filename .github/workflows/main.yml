@@ -35,5 +35,5 @@ jobs:
         env:
           ALL_CHANGED_FILES: ${{ steps.changed-py-files.outputs.all_changed_files }}
         run: |
-          ruff check --output-format=github ${{ ALL_CHANGED_FILES }}
+          ruff check --output-format=github ${ALL_CHANGED_FILES}
       
