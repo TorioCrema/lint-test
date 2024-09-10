@@ -1,0 +1,50 @@
+---
+name: Lint
+
+on:
+  push:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  changed_files:
+    runs-on: ubuntu-20.04
+    name: Linting
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Install Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.8"
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install ruff
+
+      - name: Get changed files
+        id: changed
+        uses: tj-actions/changed-files@v45
+        with:
+          files_yaml: |
+            py:
+              - '**.py'
+            cpp:
+              - '**.cpp'
+              - '**.h'
+              - '**.cpp'
+      - name: Lint all changed python files
+        if: steps.changed-files-yaml.outputs.py_any_changed == 'true'
+        env:
+          PY_CHANGED_FILES: ${{ steps.changed-files-yaml.outputs.py_all_changed_files }}
+        run: |
+          ruff check --output-format=github ${PY_ALL_CHANGED_FILES}
+      - name: Lint all changed C++ files
+        if: steps.changed-files-yaml.outputs.cpp_any_changed == 'true'
+        env:
+          CPP_CHANGED_FILES: ${{ steps.changed-files-yaml.outputs.cpp_all_changed_files }}
+        run: |
+          clang-tidy ${CPP_ALL_CHANGED_FILES}
+      
