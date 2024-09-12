@@ -18,9 +18,12 @@ jobs:
 
       - name: Test
         run: |
+          mkdir -p /home/ubm/repo
           echo "Working dir: `pwd`"
           echo "Workspace: ${{ github.workspace }}"
           echo "Repository: ${{ github.repository }}"
+          cp ./* /home/ubm/repo
+          cd /home/ubm/repo
           ls
             
       - name: Install Python
