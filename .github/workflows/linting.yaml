@@ -21,6 +21,7 @@ jobs:
           echo "Working dir: `pwd`"
           echo "Workspace: ${{ github.workspace }}"
           echo "Repository: ${{ github.repository }}"
+          ls
             
       - name: Install Python
         uses: actions/setup-python@v5
