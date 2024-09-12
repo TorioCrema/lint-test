@@ -15,6 +15,13 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+      - name: Test
+        run: |
+          echo "Working dir: `pwd`"
+          echo "Workspace: ${{ github.workspace }}"
+          echo "Repository: ${{ github.repository }}"
+            
       - name: Install Python
         uses: actions/setup-python@v5
         with:
