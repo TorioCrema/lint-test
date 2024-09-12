@@ -10,6 +10,7 @@ on:
 jobs:
   changed_files:
     runs-on: ubuntu-20.04
+    container: osrf/ros:foxy-desktop
     name: Linting
     steps:
       - uses: actions/checkout@v4
